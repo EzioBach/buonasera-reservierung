@@ -297,5 +297,22 @@ function reset(){sel={date:null,time:null};guests=2;$("gcount").textContent=2;$(
 $("again").onclick=reset;$("again2").onclick=reset;
 applyLang();
 </script>
+ <script>
+(function(){
+  var HOME="https://www.buona-sera.de";
+  var H={de:"Zur Startseite",en:"Back to homepage",it:"Torna alla home"};
+  var nav=document.querySelector(".xnav"); if(!nav)return;
+  nav.style.gap="12px"; nav.style.flexWrap="wrap";
+  var a=document.createElement("a"); a.href=HOME; nav.insertBefore(a,nav.firstChild);
+  var logo=document.querySelector("header .logo");
+  if(logo&&logo.parentNode&&logo.parentNode.tagName!=="A"){
+    var l=document.createElement("a"); l.href=HOME; l.setAttribute("aria-label","Startseite");
+    logo.parentNode.insertBefore(l,logo); l.appendChild(logo);
+  }
+  function upd(){var k=(document.documentElement.lang||"de").slice(0,2).toLowerCase(); a.textContent=H[k]||H.de;}
+  upd();
+  new MutationObserver(upd).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]});
+})();
+</script>
 </body>
 </html>
