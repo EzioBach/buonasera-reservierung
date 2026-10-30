@@ -175,10 +175,10 @@ footer a{color:var(--gold);text-decoration:none}
 <footer><b>Ristorante Buona Sera</b>Rosenstraße 4 · 21335 Lüneburg · <a href="tel:+49413137275">04131 37275</a><br><span data-t="footer"></span> · <span data-t="since"></span></footer>
 
 <script>
-const EMAIL = "buonasera.mi@gmail.com";
+const EMAIL = "buonasera.mi@gmail.com,info@buona-sera.de";
 const MENU_URL = "https://speisekarte.buona-sera.de/";   // <- Adresse der Speisekarte eintragen
 const MODE = "formsubmit";        // "formsubmit" = automatischer Versand | "mailto" = nur E-Mail-App, ohne Drittdienst
-const ENDPOINT = "https://formsubmit.co/ajax/" + EMAIL;
+const ENDPOINT = "https://script.google.com/a/macros/buona-sera.de/s/AKfycbyae0jjk1eHKIeBJMMQXamE0u4ciOZ6Bc7OoNHm8Ui58XY8IIip3dwDvVs_lDzive5lmQ/exec";
 const LUNCH  = ["12:00","12:30","13:00","13:30","14:00"];
 const DINNER = ["18:00","18:30","19:00","19:30","20:00","20:30","21:00"];
 const CLOSED_WEEKDAYS = [2];      // Ruhetag: 0=So, 1=Mo, 2=Di, 3=Mi, 4=Do, 5=Fr, 6=Sa
@@ -285,9 +285,9 @@ $("f").addEventListener("submit",async e=>{
   const payload={_subject:subject,_template:"table",_captcha:"false","Name":name,"Telefon":phone,"Datum":dDE,"Uhrzeit":sel.time+" Uhr","Personen":String(guests),"Anmerkungen":notes};
   const btn=$("send");btn.disabled=true;btn.textContent=L.sending;
   try{
-    const r=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload)});
+    const r=await fetch(ENDPOINT,{method:"POST",body:new URLSearchParams(payload)});
     const j=await r.json();
-    if(!r.ok||j.success===false||j.success==="false")throw new Error();
+    if(!j.ok)throw new Error();
     $("okText").textContent=L.okText(name,fmt(new Date(sel.date+"T12:00")),sel.time,gtxt(guests));
     $("formWrap").style.display="none";$("ok").style.display="block";window.scrollTo({top:0,behavior:"smooth"});
   }catch(x){showMail();}
