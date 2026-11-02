@@ -357,5 +357,48 @@ applyLang();
   applyLang();
 })();
 </script>
+<script>
+(function(){
+  var BLOCKED=[];
+  function whole(b){ var k=(b.t||"").toLowerCase(); return k===""||k==="ganzer tag"||k==="ganztags"; }
+  function dayBlocked(iso){ return BLOCKED.some(function(b){return b.d===iso && whole(b);}); }
+  function slotBlocked(iso,t){
+    return BLOCKED.some(function(b){
+      if(b.d!==iso) return false;
+      if(whole(b)) return true;
+      var k=(b.t||"").toLowerCase();
+      if(k==="mittag") return t<"16:00";
+      if(k==="abend") return t>="16:00";
+      return k===t;
+    });
+  }
+  var baseCal=renderCal;
+  window.renderCal=function(){
+    baseCal();
+    document.querySelectorAll("#days .day").forEach(function(b){
+      if(dayBlocked(b.dataset.d)){ b.disabled=true; b.title="ausgebucht"; }
+    });
+  };
+  var baseOff2=slotOff;
+  window.slotOff=function(t){
+    if(sel.date && slotBlocked(sel.date,t)) return true;
+    return baseOff2(t);
+  };
+  function load(){
+    fetch(ENDPOINT+(ENDPOINT.indexOf("?")>-1?"&":"?")+"action=blocked&_="+Date.now())
+      .then(function(r){return r.json();})
+      .then(function(j){
+        if(!j||!j.ok) return;
+        BLOCKED=j.blocked||[];
+        if(sel.date&&dayBlocked(sel.date)){ sel.date=null; sel.time=null; }
+        if(sel.date&&sel.time&&slotBlocked(sel.date,sel.time)){ sel.time=null; }
+        renderCal(); renderSlots(); renderSummary();
+      })
+      .catch(function(){});
+  }
+  load();
+  document.getElementById("days").addEventListener("click",function(){ setTimeout(load,0); });
+})();
+</script>
 </body>
 </html>
