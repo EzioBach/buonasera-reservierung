@@ -314,5 +314,48 @@ applyLang();
   new MutationObserver(upd).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]});
 })();
 </script>
+<script>
+(function(){
+  var WEEKEND_DAYS=[5,6,0];
+  var WEEKEND_SLOTS=["12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00"];
+  var TXT={
+    de:{wk:"Mo, Mi, Do",we:"Fr – So",all:"durchgehend",title:"Durchgehend geöffnet",brk:"Küchenpause Mo, Mi, Do: 15:00 – 18:00 Uhr · Dienstag Ruhetag"},
+    en:{wk:"Mon, Wed, Thu",we:"Fri – Sun",all:"non-stop",title:"Open all day",brk:"Kitchen break Mon, Wed, Thu: 15:00 – 18:00 · Closed on Tuesdays"},
+    it:{wk:"Lun, Mer, Gio",we:"Ven – Dom",all:"orario continuato",title:"Aperto tutto il giorno",brk:"Pausa cucina lun, mer, gio: 15:00 – 18:00 · Martedì chiuso"}
+  };
+  Object.keys(TXT).forEach(function(k){ if(T[k]) T[k].breakInfo=TXT[k].brk; });
+  function isWE(){ return !!sel.date && WEEKEND_DAYS.indexOf(new Date(sel.date+"T12:00").getDay())>-1; }
+  var baseOff=slotOff;
+  window.slotOff=function(t){
+    if(!sel.date) return true;
+    var list=isWE()?WEEKEND_SLOTS:LUNCH.concat(DINNER);
+    if(list.indexOf(t)<0) return true;
+    return baseOff(t);
+  };
+  window.renderSlots=function(){
+    var L=TXT[lang]||TXT.de, we=isWE();
+    var mk=function(t){return '<button type="button" class="slot '+(sel.time===t?"sel":"")+'" data-time="'+t+'" '+(slotOff(t)?"disabled":"")+'>'+t+'</button>';};
+    var lt=document.querySelector('.slots-title[data-t="lunch"]');
+    var dt=document.querySelector('.slots-title[data-t="dinner"]');
+    var ps=document.querySelector('.pause');
+    if(we){
+      $("lunchSlots").innerHTML=WEEKEND_SLOTS.map(mk).join("");
+      $("dinnerSlots").innerHTML="";
+      lt.textContent=L.title; dt.style.display="none"; ps.style.display="none"; $("dinnerSlots").style.display="none";
+    } else {
+      $("lunchSlots").innerHTML=LUNCH.map(mk).join("");
+      $("dinnerSlots").innerHTML=DINNER.map(mk).join("");
+      lt.textContent=T[lang].lunch; dt.style.display=""; ps.style.display=""; $("dinnerSlots").style.display="";
+    }
+    $("slotHint").style.display=sel.date?"none":"block";
+    var h=document.querySelector(".notice .hours");
+    if(h){
+      h.style.flexDirection="column"; h.style.gap="4px";
+      h.innerHTML="<span>"+L.wk+": 12:00 – 14:00 · 18:00 – 21:00</span><span>"+L.we+": 12:00 – 21:00 "+L.all+"</span>";
+    }
+  };
+  applyLang();
+})();
+</script>
 </body>
 </html>
