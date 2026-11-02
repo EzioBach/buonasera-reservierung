@@ -317,7 +317,7 @@ applyLang();
 <script>
 (function(){
   var WEEKEND_DAYS=[5,6,0];
-  var WEEKEND_SLOTS=["12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00"];
+  var WEEKEND_SLOTS=["12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00"];
   var TXT={
     de:{wk:"Mo, Mi, Do",we:"Fr – So",all:"durchgehend",title:"Durchgehend geöffnet",brk:"Küchenpause Mo, Mi, Do: 15:00 – 18:00 Uhr · Dienstag Ruhetag"},
     en:{wk:"Mon, Wed, Thu",we:"Fri – Sun",all:"non-stop",title:"Open all day",brk:"Kitchen break Mon, Wed, Thu: 15:00 – 18:00 · Closed on Tuesdays"},
@@ -351,7 +351,7 @@ applyLang();
     var h=document.querySelector(".notice .hours");
     if(h){
       h.style.flexDirection="column"; h.style.gap="4px";
-      h.innerHTML="<span>"+L.wk+": 12:00 – 14:00 · 18:00 – 21:00</span><span>"+L.we+": 12:00 – 21:00 "+L.all+"</span>";
+      h.innerHTML="<span>"+L.wk+": 12:00 – 14:00 · 18:00 – 20:00</span><span>"+L.we+": 12:00 – 20:00 "+L.all+"</span>";
     }
   };
   applyLang();
