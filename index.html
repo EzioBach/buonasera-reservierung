@@ -369,7 +369,7 @@ applyLang();
       var k=(b.t||"").toLowerCase();
       if(k==="mittag") return t<"16:00";
       if(k==="abend") return t>="16:00";
-      return k===t;
+      return k.split(/[;,]\s*/).some(function(p){var r=p.split(/\s*[-–]\s*/);return r.length===2?(t>=r[0].trim()&&t<=r[1].trim()):p.trim()===t;});
     });
   }
   var baseCal=renderCal;
